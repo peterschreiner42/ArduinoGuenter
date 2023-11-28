@@ -11,13 +11,13 @@ char hexaKeys[ROWS][COLS]={
 {'A','3','2','1'}
 };
 
-
-
 byte colPins[COLS] = {2,3,4,5};
 byte rowPins[ROWS] = {6,7,8,9};
 char eingabe[4];
 int counter = 0;
 
+
+bool EingebeKorrekt;
 char Taste;
 Keypad Tastenfeld = Keypad(makeKeymap(hexaKeys), rowPins, colPins,ROWS,COLS);
 
@@ -38,20 +38,19 @@ void loop()
     eingabe[counter] = (char)Taste;
     if(counter>4) 
     {
-    Auswertung(eingabe);
+        EingebeKorrekt = Auswertung(eingabe);
     }
   
     counter++;
   }
 }
 
-void Auswertung(char ein[])
+bool Auswertung(char ein[])
 {
-  char value = (char)ein[0]; 
-  Serial.print(ein[0]);
-  Serial.print(ein[1]);
-  Serial.print(ein[2]);
-  Serial.print(ein[3]);
-
-  counter = 0;
+  if(ein[0]=1 & ein[2]=1 &ein[3]=3)
+    return true;
+  else 
+    return false;
+    
+counter = 0;
 }
