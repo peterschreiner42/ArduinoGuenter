@@ -16,8 +16,8 @@ byte rowPins[ROWS] = {6,7,8,9};
 char eingabe[4];
 int counter = 0;
 
-
-bool EingebeKorrekt;
+bool ErsteEingabeKorrekt;
+bool AnsageOneAbgespielt;
 char Taste;
 Keypad Tastenfeld = Keypad(makeKeymap(hexaKeys), rowPins, colPins,ROWS,COLS);
 
@@ -26,10 +26,38 @@ void setup()
 {
   Serial.begin(9600);
   counter = 0;
+
+  ErsteEingabeKorrekt = false;
+  AnsageOneAbgespielt = false;
 }
 
 // the loop function runs over and over again forever
 void loop() 
+{
+  if(!ErsteEingabeKorrekt)
+    ErsteEingabeKorrekt = PartOne();
+
+  if(ErsteEingabeKorrekt && !AnsageOneAbgespielt) // wird somit nur einmal ausgeführt wenn Erster Part erfolgreich war.
+    PartTwo()
+
+  if(ErsteEingabeKorrekt)
+    PartThree();
+}
+
+bool PartThree()
+{
+// Timer starten
+
+}
+
+bool PartTwo()
+{
+
+  // Ansage EINMAL ausführen
+  AnsageOneAbgespielt = true;
+}
+
+bool PartOne()
 {
   Taste = Tastenfeld.getKey();
   if(Taste)
@@ -38,11 +66,13 @@ void loop()
     eingabe[counter] = (char)Taste;
     if(counter>4) 
     {
-        EingebeKorrekt = Auswertung(eingabe);
+        counter =0;
+        return Auswertung(eingabe);
     }
   
     counter++;
   }
+  return false;
 }
 
 bool Auswertung(char ein[])
@@ -51,6 +81,4 @@ bool Auswertung(char ein[])
     return true;
   else 
     return false;
-    
-counter = 0;
 }
