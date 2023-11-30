@@ -3,6 +3,8 @@
 
 const byte COLS = 4;
 const byte ROWS = 4;
+int taster = 10;
+int stateTaster = 0;
 
 char hexaKeys[ROWS][COLS]={
 {'D','#','0','*'},
@@ -14,10 +16,10 @@ char hexaKeys[ROWS][COLS]={
 byte colPins[COLS] = {2,3,4,5};
 byte rowPins[ROWS] = {6,7,8,9};
 int eingabe[3] = {0,0,0};
-int counter = 0;
 
 bool ErsteEingabeKorrekt;
 bool AnsageOneAbgespielt;
+bool HoereraAbnehmen;
 
 Keypad Tastenfeld = Keypad(makeKeymap(hexaKeys), rowPins, colPins,ROWS,COLS);
 
@@ -25,25 +27,41 @@ Keypad Tastenfeld = Keypad(makeKeymap(hexaKeys), rowPins, colPins,ROWS,COLS);
 void setup()
 {
   Serial.begin(9600);
-  counter = 0;
-
+  pinMode(taster, INPUT);
+  pinMode(13, OUTPUT);
   ErsteEingabeKorrekt = false;
   AnsageOneAbgespielt = false;
+  HoereraAbnehmen = false;
 }
 
 // the loop function runs over and over again forever
 void loop() 
 {
+  if(!HoereraAbnehmen)
+  {
+    digitalWrite(13, HIGH);
+    delay(500);
+    digitalWrite(13, LOW);
+    delay(500);
+  }
+  Serial.println("HoereraAbnehmen"); Serial.print (HoereraAbnehmen );
+  if(digitalRead(taster))
+  {
+    digitalWrite(13, HIGH);
+    HoereraAbnehmen = true;
+  }
+  
+  if(HoereraAbnehmen)
+  {
+    if(!ErsteEingabeKorrekt)
+      ErsteEingabeKorrekt = PartOne();
 
+    if(ErsteEingabeKorrekt && !AnsageOneAbgespielt) // wird somit nur einmal ausgeführt wenn Erster Part erfolgreich war.
+      PartTwo();
 
-  if(!ErsteEingabeKorrekt)
-    ErsteEingabeKorrekt = PartOne();
-
-  if(ErsteEingabeKorrekt && !AnsageOneAbgespielt) // wird somit nur einmal ausgeführt wenn Erster Part erfolgreich war.
-    PartTwo();
-
-  if(ErsteEingabeKorrekt)
-    PartThree();
+    if(ErsteEingabeKorrekt)
+      PartThree();
+  }
 }
 
 bool PartThree()
